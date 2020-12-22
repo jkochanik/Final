@@ -1,5 +1,5 @@
-	.global _Z12eratosthenesPbj 
-_Z12eratosthenesPbj:
+	.global _Z12eratosthenesPjj 
+_Z12eratosthenesPjj:
 	push	{r4, r5}
 	push	{r6, r7}
 	push	{r8, r9}
@@ -21,12 +21,13 @@ _Z12eratosthenesPbj:
 	
 
 	mov	r2, #0xFFFFFFFF		@r2 is register to set all true
+	lsr	r1, #1
 	mov	r4, r0 			@r4 is long term save for array address
 	add	r3, r1, #32		@Find counter to set true by 32 bits and keep in r3. Step 1: add by 32
 	lsr	r3, #6			@Step 2: divide n by 64
 setAllPrime:	
 	str	r2, [r0], #4		@store FFFFFFFF in every 32 bits 
-	subs	r3, #1			@index counter for FFs filler subs to count down
+	subs	r3, #4			@index counter for FFs filler subs to count down
 	bne	setAllPrime
 
 	
@@ -49,7 +50,8 @@ getbit:
 	add	r8, #1  		@turns r8 into number counter for bit clears
 bitClear:	
 	add	r9, r8
-	lsr	r0, r9, #3
+	lsr	r0, r9, #5
+	lsl	r0, #2
 	ldr	r10, [r4, r0]		@load word based on where r9 is			 
 	and	r5, r9, #31
 	lsl	r5, r6, r5
@@ -57,34 +59,44 @@ bitClear:
 	bicne	r10, r5
 	str	r10, [r4, r0]
 	cmp	r1, r9
-	blt	bitClear
+	bge	bitClear
+	mov	r9, #0
 	
 	
 	
 looper:
 	add	r3, #1
 	cmp	r3, r1
-	bne	end
+	beq	end
 	lsr	r0, r3, #5
-	cmp	r11, r0
-	bne	getWord
-	b	getbit
+	cmp	r9, #0
+	beq	getWord
+	cmp	r11, r0 
+	beq	getbit
+	b	getWord
 
-
-	mov	r0, #0
-	mov	r3, #1
-	mov	r5, #32
+end:	
+	mov	r0, #0		@sum
+	mov	r3, #1		@position index
 endloop:
+	mov	r5, #32		@word length count down
 	ldr	r2, [r4], #4
 endloop2:	
 	and	r7, r3, #31
 	lsl	r7, r6, r7
 	tst	r2, r7
 	addne	r0, #1
-	subs	r5, #1
-	bne	endloop2
-	subs	r1, #32
-	bne	endloop
+	subs	r5, #1		@counting down from 32 to see when to get new word
+	add	r3, #1
+	beq 	endloop		@branch to get new word
+	cmp	r1, r3		@count down to see when finished entire array
+	bne	endloop2	@if not finished loop again
+
+
+	pop	{r10, r11}
+	pop	{r8, r9}
+	pop	{r6, r7}
+	pop	{r4, r5}
 	bx 	lr
 	
 	

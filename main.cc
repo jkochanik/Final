@@ -1,26 +1,19 @@
-cout << "The counter is " << counter;
-  return 1;
-}
 #include <iostream>
 using namespace std;
 
 
-uint32_t eratosthenes(bool isPrime[], uint32_t n);
+uint32_t eratosthenes(uint32_t* isPrime, uint32_t n);
 
 int main (){
   uint32_t n = 1E9;
-  const uint32_t size = (n+32  ) / 64;
-  bool* p = new bool[size];
+  const uint32_t size = (n+32)/64;
+  uint32_t* p = new uint32_t[size];
 
-  //cout << size << endl;                                                                                                                  
+  cout << size << endl;                                                                                                                  
   cout << eratosthenes(p, n) << '\n';
-int counter = 0;
-        for(int i = 0; i<=size; i++){
-                if(p[i]){
-                counter++;
-}
-        }
-cout << "The counter is " << counter;
+  
+ 
+
   return 1;
 }
 
