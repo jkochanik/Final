@@ -47,9 +47,10 @@ getbit:
 
 
 	lsl	r8, r3, #1
-	add	r8, #1  		@turns r8 into number counter for bit clears
-bitClear:	
+	add	r8, #1		@turns r8 into number counter for bit clears
 	add	r9, r8
+bitClear:	
+	
 	lsr	r0, r9, #5
 	lsl	r0, #2
 	ldr	r10, [r4, r0]		@load word based on where r9 is			 
@@ -58,6 +59,7 @@ bitClear:
 	tst	r10, r5
 	bicne	r10, r5
 	str	r10, [r4, r0]
+	add	r9, r8
 	cmp	r1, r9
 	bge	bitClear
 	mov	r9, #0
